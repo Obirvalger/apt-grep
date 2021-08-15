@@ -1,8 +1,10 @@
-use std::path::{Path, PathBuf};
+use std::fs::File;
+use std::path::Path;
 
 use actix_files::NamedFile;
 use actix_web::{get, web, App, HttpServer, Result};
 use serde::Deserialize;
+use tempfile::tempfile;
 
 use apt_grep::search_engine::ripgrep;
 use apt_grep::SearchQuery;
@@ -17,8 +19,7 @@ struct Info {
     add_noarch: bool,
 }
 
-fn generate(info: &Info) -> std::io::Result<PathBuf> {
-    let out_file = PathBuf::from("result.txt");
+fn generate(info: &Info, out_file: &File) -> std::io::Result<()> {
     let contents_index_dir = Path::new("contents_index_dir");
     let branches = info.branches.split(',').collect::<StrSet>();
     let mut arches = info.arches.split(',').collect::<StrSet>();
@@ -36,16 +37,17 @@ fn generate(info: &Info) -> std::io::Result<PathBuf> {
 
     ripgrep::search(&sq)?;
 
-    Ok(out_file)
+    Ok(())
 }
 
 // this handler gets called if the query deserializes into `Info` successfully
 // otherwise a 400 Bad Request error response is returned
 #[get("/")]
 async fn index(info: web::Query<Info>) -> Result<NamedFile> {
+    let out_file = tempfile()?;
     format!("Welcome {:?}!", info);
-    let path = generate(&info)?;
-    Ok(NamedFile::open(path)?)
+    generate(&info, &out_file)?;
+    Ok(NamedFile::from_file(out_file, "result.txt")?)
 }
 
 #[actix_web::main]

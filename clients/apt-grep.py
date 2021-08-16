@@ -4,6 +4,10 @@ import argparse
 import platform
 import subprocess
 
+from pathlib import Path
+
+import yaml
+
 
 def get_defaults():
     return {
@@ -14,6 +18,22 @@ def get_defaults():
         'add_noarch': True,
         'filename': False,
     }
+
+
+def get_config(defaults):
+    config_yaml = Path('/etc/apt-grep/client.yaml')
+    if not config_yaml.exists():
+        return defaults
+
+    with open(config_yaml) as f:
+        config = yaml.safe_load(f)
+        if config is None:
+            return defaults
+        for k, v in defaults.items():
+            if k not in config:
+                config[k] = defaults[k]
+
+    return config
 
 
 def parse_args(defaults):
@@ -93,7 +113,8 @@ def do_request(args):
 
 def main():
     defaults = get_defaults()
-    args = parse_args(defaults)
+    config = get_config(defaults)
+    args = parse_args(config)
     do_request(args)
 
 

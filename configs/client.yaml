@@ -1,0 +1,6 @@
+# url: "127.0.0.1:8080"
+# branches: ["sisyphus"]
+# arches: ["x86_64"]
+# lines: 20
+# add_noarch: true
+# filename: false

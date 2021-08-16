@@ -21,6 +21,8 @@ struct Info {
     add_noarch: bool,
     #[serde(default = "default_lines")]
     lines: i64,
+    #[serde(default = "default_lines")]
+    lines_in_file: i64,
     #[serde(default)]
     filename: bool,
 }
@@ -39,6 +41,7 @@ fn generate(info: &Info, out_file: &File) -> std::io::Result<()> {
     }
     let max_lines = getenv_i64("APT_GREP_MAX_LINES", 100);
     let lines = max(min(info.lines, max_lines), 1);
+    let lines_in_file = max(min(info.lines_in_file, max_lines), 1);
 
     let sq = SearchQuery {
         re: &info.re,
@@ -47,6 +50,7 @@ fn generate(info: &Info, out_file: &File) -> std::io::Result<()> {
         arches: &arches,
         out_file,
         lines,
+        lines_in_file,
         filename: info.filename,
     };
 

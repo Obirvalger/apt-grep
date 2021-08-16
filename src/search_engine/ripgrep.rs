@@ -21,7 +21,7 @@ pub fn search(sq: &SearchQuery) -> Result<()> {
         rg.arg("--no-filename");
     }
     rg.arg(sq.re)
-        .arg(format!("--max-count={}", sq.lines))
+        .arg(format!("--max-count={}", sq.lines_in_file))
         .args(&contents_indexes)
         .current_dir(&sq.contents_index_dir)
         .stdout(Stdio::piped())

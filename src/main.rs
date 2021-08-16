@@ -9,6 +9,7 @@ use tempfile::tempfile;
 use apt_grep::search_engine::ripgrep;
 use apt_grep::SearchQuery;
 use apt_grep::StrSet;
+use apt_grep::{getenv, getenv_i64};
 
 #[derive(Deserialize, Debug)]
 struct Info {
@@ -20,7 +21,8 @@ struct Info {
 }
 
 fn generate(info: &Info, out_file: &File) -> std::io::Result<()> {
-    let contents_index_dir = Path::new("contents_index_dir");
+    let contents_index_dir = getenv("APT_GREP_CONTENTS_INDEX_DIR", "contents_index_dir");
+    let contents_index_dir = Path::new(&contents_index_dir);
     let branches = info.branches.split(',').collect::<StrSet>();
     let mut arches = info.arches.split(',').collect::<StrSet>();
     if info.add_noarch {
@@ -52,5 +54,8 @@ async fn index(info: web::Query<Info>) -> Result<NamedFile> {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    HttpServer::new(|| App::new().service(index)).bind("127.0.0.1:8080")?.run().await
+    let host = getenv("APT_GREP_HOST", "127.0.0.1");
+    let port = getenv_i64("APT_GREP_PORT", 8080);
+    let address = format!("{}:{}", host, port);
+    HttpServer::new(|| App::new().service(index)).bind(address)?.run().await
 }

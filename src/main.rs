@@ -21,6 +21,8 @@ struct Info {
     add_noarch: bool,
     #[serde(default = "default_lines")]
     lines: i64,
+    #[serde(default)]
+    filename: bool,
 }
 
 fn default_lines() -> i64 {
@@ -45,6 +47,7 @@ fn generate(info: &Info, out_file: &File) -> std::io::Result<()> {
         arches: &arches,
         out_file,
         lines,
+        filename: info.filename,
     };
 
     ripgrep::search(&sq)?;

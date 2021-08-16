@@ -12,4 +12,5 @@ curl 127.0.0.1:8080 -G \
     --data-urlencode "lines=$LINES" \
     --data-urlencode "add_noarch=true" \
     --data-urlencode "re=$RE" \
+    --data-urlencode "filename=false" \
     #

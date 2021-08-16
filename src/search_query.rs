@@ -11,4 +11,5 @@ pub struct SearchQuery<'a> {
     pub arches: &'a StrSet<'a>,
     pub out_file: &'a File,
     pub lines: i64,
+    pub filename: bool,
 }

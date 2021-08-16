@@ -8,8 +8,8 @@ import subprocess
 def get_defaults():
     return {
         'url':  '127.0.0.1:8080',
-        'branch': 'sisyphus',
-        'arch': platform.machine(),
+        'branches': ['sisyphus'],
+        'arches': [platform.machine()],
         'lines': 20,
         'add_noarch': True,
         'filename': False,
@@ -30,14 +30,14 @@ def parse_args(defaults):
         '-b',
         '--branches',
         nargs='+',
-        default=[defaults['branch']],
+        default=defaults['branches'],
         help='list of branches',
     )
     parser.add_argument(
         '-a',
         '--arches',
         nargs='+',
-        default=[defaults['arch']],
+        default=defaults['arches'],
         help='list of arches',
     )
     parser.add_argument(

@@ -16,7 +16,7 @@ def get_defaults():
         'arches': [platform.machine()],
         'lines': 20,
         'add_noarch': True,
-        'filename': False,
+        'filename': None,
     }
 
 
@@ -92,6 +92,12 @@ def parse_args(defaults):
         help='searching regexp',
     )
     args = parser.parse_args()
+
+    if args.filename is None:
+        if len(args.branches) > 1 or len(args.arches) > 1:
+            args.filename = True
+        else:
+            args.filename = False
 
     return args
 

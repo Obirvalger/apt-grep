@@ -1,6 +1,6 @@
 #!/bin/sh -eu
 
-content_index_dir=contents_index_dir
+content_index_dir="${APT_GREP_CONTENTS_INDEX_DIR-contents_index_dir}"
 rsync_url=rsync://rsync.altlinux.org/ALTLinux
 
 f_arches_for_branch() {
@@ -14,7 +14,7 @@ f_arches_for_branch() {
 }
 
 f_branches() {
-    echo Sisyphus p8 p9 p10
+    echo sisyphus p8 p9 p10
 }
 
 for branch in $(f_branches); do
@@ -24,8 +24,8 @@ for branch in $(f_branches); do
         else
             url="$rsync_url/$branch/branch/$arch"
         fi
-        out_dir="$content_index_dir/$branch/$arch"
+        out_dir="$content_index_dir/$branch"
         mkdir -p "$out_dir"
-        rsync -Pt "$url/base/contents_index" "$out_dir/contents_index"
+        rsync -Pt "$url/base/contents_index" "$out_dir/$arch"
     done
 done

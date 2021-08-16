@@ -1,4 +1,5 @@
 use std::io::Result;
+use std::path::PathBuf;
 use std::process::{Command, Stdio};
 
 use crate::SearchQuery;
@@ -7,8 +8,7 @@ pub fn search(sq: &SearchQuery) -> Result<()> {
     let mut contents_indexes = Vec::with_capacity(sq.branches.len() * sq.arches.len());
     for branch in sq.branches {
         for arch in sq.arches {
-            let contents_index =
-                sq.contents_index_dir.join(branch).join(arch).join("contents_index");
+            let contents_index = PathBuf::from(branch).join(arch);
             contents_indexes.push(contents_index);
         }
     }
@@ -23,6 +23,7 @@ pub fn search(sq: &SearchQuery) -> Result<()> {
     rg.arg(sq.re)
         .arg(format!("--max-count={}", sq.lines))
         .args(&contents_indexes)
+        .current_dir(&sq.contents_index_dir)
         .stdout(Stdio::piped())
         .stderr(Stdio::from(errors));
     let mut rg_child = rg.spawn()?;

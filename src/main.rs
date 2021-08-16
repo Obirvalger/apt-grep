@@ -29,10 +29,10 @@ fn generate(info: &Info, out_file: &File) -> std::io::Result<()> {
 
     let sq = SearchQuery {
         re: &info.re,
-        contents_index_dir: &contents_index_dir,
+        contents_index_dir,
         branches: &branches,
         arches: &arches,
-        out_file: &out_file,
+        out_file,
     };
 
     ripgrep::search(&sq)?;

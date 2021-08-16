@@ -11,5 +11,5 @@ cargo run
 
 Use client:
 ```
-./apt-grep.sh 'bin/vml' p10 aarch64
+clients/apt-grep.sh 'bin/vml' p10 aarch64
 ```

@@ -1,3 +1,4 @@
+use std::cmp::{max, min};
 use std::fs::File;
 use std::path::Path;
 
@@ -18,6 +19,12 @@ struct Info {
     re: String,
     #[serde(default)]
     add_noarch: bool,
+    #[serde(default = "default_lines")]
+    lines: i64,
+}
+
+fn default_lines() -> i64 {
+    getenv_i64("APT_GREP_DEFAULT_LINES", 20)
 }
 
 fn generate(info: &Info, out_file: &File) -> std::io::Result<()> {
@@ -28,6 +35,8 @@ fn generate(info: &Info, out_file: &File) -> std::io::Result<()> {
     if info.add_noarch {
         arches.insert("noarch");
     }
+    let max_lines = getenv_i64("APT_GREP_MAX_LINES", 100);
+    let lines = max(min(info.lines, max_lines), 1);
 
     let sq = SearchQuery {
         re: &info.re,
@@ -35,6 +44,7 @@ fn generate(info: &Info, out_file: &File) -> std::io::Result<()> {
         branches: &branches,
         arches: &arches,
         out_file,
+        lines,
     };
 
     ripgrep::search(&sq)?;

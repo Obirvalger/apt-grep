@@ -10,7 +10,6 @@ pub struct SearchQuery<'a> {
     pub branches: &'a StrSet<'a>,
     pub arches: &'a StrSet<'a>,
     pub out_file: &'a File,
-    pub lines: i64,
-    pub lines_in_file: i64,
+    pub max_count: i64,
     pub filename: bool,
 }

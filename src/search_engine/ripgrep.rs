@@ -20,22 +20,16 @@ pub fn search(sq: &SearchQuery) -> Result<()> {
     } else {
         rg.arg("--no-filename");
     }
+    if sq.max_count > 0 {
+        rg.arg(format!("--max-count={}", sq.max_count));
+    }
     rg.arg(sq.re)
-        .arg(format!("--max-count={}", sq.lines_in_file))
         .args(&contents_indexes)
         .current_dir(&sq.contents_index_dir)
-        .stdout(Stdio::piped())
-        .stderr(Stdio::from(errors));
-    let mut rg_child = rg.spawn()?;
-    if let Some(rg_output) = rg_child.stdout.take() {
-        Command::new("head")
-            .arg(format!("-n {}", sq.lines))
-            .stdin(rg_output)
-            .stdout(outputs)
-            .stderr(Stdio::null())
-            .spawn()?
-            .wait()?;
-    }
+        .stdout(outputs)
+        .stderr(Stdio::from(errors))
+        .spawn()?
+        .wait()?;
 
     Ok(())
 }

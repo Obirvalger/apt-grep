@@ -14,8 +14,7 @@ def get_defaults():
         'url':  '127.0.0.1:8080',
         'branches': ['sisyphus'],
         'arches': [platform.machine()],
-        'lines': 20,
-        'lines_in_file': 20,
+        'max_count': 20,
         'add_noarch': True,
         'filename': None,
     }
@@ -62,16 +61,10 @@ def parse_args(defaults):
         help='list of arches',
     )
     parser.add_argument(
-        '-l',
-        '--lines',
-        default=defaults['lines'],
+        '-m',
+        '--max-count',
+        default=defaults['max_count'],
         help='limit lines in output',
-    )
-    parser.add_argument(
-        '-L',
-        '--lines-in-file',
-        default=defaults['lines_in_file'],
-        help='limit output lines for one branch and arch',
     )
     parser.add_argument(
         '--add-noarch',
@@ -116,8 +109,7 @@ def do_request(args):
         '-G',
         '--data-urlencode', f"branches={','.join(args.branches)}",
         '--data-urlencode', f"arches={','.join(args.arches)}",
-        '--data-urlencode', f"lines={args.lines}",
-        '--data-urlencode', f"lines_in_file={args.lines_in_file}",
+        '--data-urlencode', f"max_count={args.max_count}",
         '--data-urlencode', f"add_noarch={str(args.add_noarch).lower()}",
         '--data-urlencode', f"filename={str(args.filename).lower()}",
         '--data-urlencode', f"re={args.regexp}",

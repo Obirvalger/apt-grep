@@ -64,6 +64,7 @@ def parse_args(defaults):
         '-m',
         '--max-count',
         default=defaults['max_count'],
+        type=int,
         help='limit lines in output',
     )
     parser.add_argument(

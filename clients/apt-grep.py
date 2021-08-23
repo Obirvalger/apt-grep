@@ -1,7 +1,9 @@
 #!/usr/bin/python3
 
 import argparse
+import os
 import platform
+import shutil
 import subprocess
 
 from pathlib import Path
@@ -20,10 +22,21 @@ def get_defaults():
     }
 
 
+def ensure_user_config():
+    user_config = Path('~/.config/apt-grep/client.yaml').expanduser()
+    if not user_config.exists():
+        os.makedirs(user_config.parent, exist_ok=True)
+        etc_config = Path('/etc/apt-grep/client.yaml')
+        if etc_config.exists():
+            shutil.copy(etc_config, user_config)
+        else:
+            user_config.write_text(yaml.safe_dump(get_defaults()))
+
+    return user_config
+
+
 def get_config(defaults):
-    config_yaml = Path('/etc/apt-grep/client.yaml')
-    if not config_yaml.exists():
-        return defaults
+    config_yaml = ensure_user_config()
 
     with open(config_yaml) as f:
         config = yaml.safe_load(f)
